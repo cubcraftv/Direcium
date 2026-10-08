@@ -1,0 +1,36 @@
+{
+	"schemaVersion": 1,
+	"id": "direcium",
+	"version": "${version}",
+	"name": "Direcium",
+	"description": "Lets Sodium's terrain renderer draw through DirectExp's Direct3D 11 backend. Requires Sodium and DirectExp; ships no Sodium code.",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/direcium/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"dev.cubcraftv.direcium.client.DireciumClient"
+		]
+	},
+	"mixins": [
+		{
+			"config": "direcium.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*",
+		"sodium": "${sodium_version_range}",
+		"directexp": "*"
+	}
+}

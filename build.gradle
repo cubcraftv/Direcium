@@ -1,0 +1,100 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'maven-publish'
+}
+
+repositories {
+	// Add repositories to retrieve artifacts from in here.
+	// You should only use this when depending on other mods because
+	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
+	// for more information about repositories.
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"direcium" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+dependencies {
+	// To change the versions see the gradle.properties file
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	// Fabric API. This is technically optional, but you probably want it anyway.
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// Sodium and DirectExp are not bundled: compile against them, and run with them in the dev client.
+	// Put the jars in libs/ (see libs/README.md). If `clientRuntimeOnly` does not load them as mods under
+	// this Loom version, switch to `localRuntime` / `modLocalRuntime`.
+	clientCompileOnly files(project.sodium_jar)
+	clientCompileOnly files(project.directexp_jar)
+	clientRuntimeOnly files(project.sodium_jar)
+	clientRuntimeOnly files(project.directexp_jar)
+
+	// Unit tests cover the pure (Minecraft-free) classes in dev.cubcraftv.direcium.bridge.
+	testImplementation "org.junit.jupiter:junit-jupiter-api:${project.junit_version}"
+	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${project.junit_version}"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher:${project.junit_version}"
+}
+
+test {
+	useJUnitPlatform()
+}
+
+processResources {
+	def version = project.version
+	def sodiumRange = project.sodium_version_range
+	inputs.property "version", version
+	inputs.property "sodium_version_range", sodiumRange
+
+	filesMatching("fabric.mod.json") {
+		expand "version": version, "sodium_version_range": sodiumRange
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+}
+
+java {
+	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+	// if it is present.
+	// If you remove this line, sources will not be generated.
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
+
+jar {
+	def projectName = project.name
+	inputs.property "projectName", projectName
+
+	from("LICENSE") {
+		rename { "${it}_$projectName"}
+	}
+}
+
+// configure the maven publication
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			from components.java
+		}
+	}
+
+	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+	repositories {
+		// Add repositories to publish to here.
+		// Notice: This block does NOT have the same function as the block in the top level.
+		// The repositories here will be used for publishing your artifact, not for
+		// retrieving dependencies.
+	}
+}
