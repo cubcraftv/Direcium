@@ -15,22 +15,14 @@ ships no Sodium code, and patches Sodium at run time with two Mixin injections.
 | `client/bridge/DirectExpBackend` | Detects DirectExp from `DeviceInfo.backendName()` |
 | `bridge/*` (in `src/main`) | Pure Java (no Minecraft types), unit tested |
 
-## Before it can run
-
-1. DirectExp must include its Phase 2 + D1 changes (`DxPushConstants`, and `multiDrawDirectInterleaved`
-   reported with a draw-count limit of at least 1793).
-2. Put the Sodium and DirectExp jars in `libs/` (see `libs/README.md`).
-3. `./gradlew build`, then `./gradlew runClient`.
-
-## Testing (Phase D)
+## Testing
 
 Run with `-Ddirecium.stats=true`, work through `docs/test/phase-d-correctness-matrix.md`, then
 `python tools/scan-log.py run/logs/latest.log`.
 
 ## Status
 
-Scaffold only. The pure logic is unit tested; the Minecraft-facing classes were only compiled against
-hand-written stubs, never against the real Sodium/Minecraft jars. Expect a round of compile fixes.
+Beta testing.
 
 ## License
 
