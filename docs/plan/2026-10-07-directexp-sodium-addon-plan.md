@@ -140,6 +140,9 @@ no GL calls and no "pipeline invalid" entries; one RenderDoc capture checks the
 `DxPushConstants` buffer contents against `updateData`.
 
 ### Phase D: Correctness matrix
+Status (2026-10-08): hardening, instrumentation and the test matrix are in the repo (`docs/test/phase-d-correctness-matrix.md`,
+`tools/scan-log.py`, `-Ddirecium.stats=true`); the matrix itself has not been run.
+
 Resize, fullscreen toggle, F3+T resource reload, dimension change, long session, render distance
 sweep, Sodium options (fog, RGSS/anisotropy, vertex compression), translucency sorting modes, with and
 without the Phase 1 leftovers. Compare with vanilla DirectExp and, if possible, Sodium on OpenGL.

@@ -22,6 +22,11 @@ ships no Sodium code, and patches Sodium at run time with two Mixin injections.
 2. Put the Sodium and DirectExp jars in `libs/` (see `libs/README.md`).
 3. `./gradlew build`, then `./gradlew runClient`.
 
+## Testing (Phase D)
+
+Run with `-Ddirecium.stats=true`, work through `docs/test/phase-d-correctness-matrix.md`, then
+`python tools/scan-log.py run/logs/latest.log`.
+
 ## Status
 
 Scaffold only. The pure logic is unit tested; the Minecraft-facing classes were only compiled against

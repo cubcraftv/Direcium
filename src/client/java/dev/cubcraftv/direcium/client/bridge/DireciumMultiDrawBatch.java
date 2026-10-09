@@ -28,6 +28,9 @@ public final class DireciumMultiDrawBatch extends MultiDrawBatch {
 		if (this.size <= 0) {
 			return;
 		}
+		if (DireciumDrawContext.STATS != null) {
+			DireciumDrawContext.STATS.draws(this.size);
+		}
 		context.getPass().multiDrawIndexed(this.parameters.view(this.size), 1, 0, this.size);
 	}
 

@@ -4,31 +4,33 @@ import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.cubcraftv.direcium.bridge.DirectExpBackendName;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Tells whether the active Blaze3D device is DirectExp's. Uses only Mojang's
  * public {@code DeviceInfo.backendName()} (the same kind of check Sodium makes
  * for OpenGL), so detection needs no compile-time knowledge of DirectExp's internals.
+ *
+ * <p>The answer is cached per device instance, not forever, so a device that is recreated
+ * (backend switch, device loss recovery) is evaluated again.
  */
 public final class DirectExpBackend {
-	private static volatile Boolean active;
+	private static WeakReference<GpuDevice> cachedDevice = new WeakReference<>(null);
+	private static boolean cachedResult;
 
 	private DirectExpBackend() {
 	}
 
-	public static boolean isActive() {
-		Boolean cached = active;
-		if (cached != null) {
-			return cached;
-		}
-
+	public static synchronized boolean isActive() {
 		GpuDevice device = RenderSystem.getDevice();
 		if (device == null) {
 			// Not created yet: answer "no" without caching, so a later call can still say yes.
 			return false;
 		}
-
-		boolean result = DirectExpBackendName.matches(device.getDeviceInfo().backendName());
-		active = result;
-		return result;
+		if (cachedDevice.get() != device) {
+			cachedResult = DirectExpBackendName.matches(device.getDeviceInfo().backendName());
+			cachedDevice = new WeakReference<>(device);
+		}
+		return cachedResult;
 	}
 }
