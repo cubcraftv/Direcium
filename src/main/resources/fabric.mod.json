@@ -15,6 +15,9 @@
 	"icon": "assets/direcium/icon.png",
 	"environment": "client",
 	"entrypoints": {
+		"main": [
+			"dev.cubcraftv.direcium.Direcium"
+		],
 		"client": [
 			"dev.cubcraftv.direcium.client.DireciumClient"
 		]

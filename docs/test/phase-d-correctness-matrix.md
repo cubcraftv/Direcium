@@ -28,7 +28,7 @@ Pass = matches reference **B** visually, no new log errors, no crash. Fill Resul
 
 | # | Scenario | Check | Result |
 |---|----------|-------|--------|
-| 1 | Cold start, load world | Log: "Direcium loaded", "initialised", DirectExp "first native render pipeline"; no scan-log errors |Direcium initialised missing; still running|
+| 1 | Cold start, load world | Log: "Direcium loaded", "initialised", DirectExp "first native render pipeline"; no scan-log errors |Direcium initialised missing (cause: no `main` entrypoint registered; fixed, see Findings F1); otherwise OK|
 | 2 | Opaque terrain | Correct positions, textures, no holes at region borders |passed|
 | 3 | Cutout (leaves, grass, flowers) | Alpha cutout correct, no black fringes |passed|
 | 4 | Translucent (water, stained glass, ice) | Draw order correct from above and below the surface |passed|
@@ -50,10 +50,10 @@ Pass = matches reference **B** visually, no new log errors, no crash. Fill Resul
 
 | # | Scenario | Check | Result |
 |---|----------|-------|--------|
-| 13 | Render distance sweep 2, 6, 12, 16, 24 | Correct at each; note memory and stats `max sub-draws in one region` (must stay <= 1793) |render distance >5 disapeared when see-through leaves toggle on (even if it turned off it still happen, restart the game fix it if see-through leaves never turned on in that session)|
-| 14 | Fog on/off, fog distance changes | Matches B |havent tested required sodium extra|
+| 13 | Render distance sweep 2, 6, 12, 16, 24 | Correct at each; note memory and stats `max sub-draws in one region` (must stay <= 1793) |PASSED after rebuild. An earlier run lost terrain above render distance 5 after toggling see-through leaves; no longer reproduces (see F2, failed to reproduce)|
+| 14 | Fog on/off, fog distance changes | Matches B |passed|
 | 15 | Anisotropic filtering / mipmap levels (RGSS where offered) | Matches B |passed|
-| 16 | Vertex compression on/off | Matches B |sodium removed setting toggle, no flicked|
+| 16 | Vertex compression on/off | Matches B |N/A: this Sodium build has no such toggle|
 | 17 | Translucency sorting modes | Matches B in each mode |passed|
 | 18 | Chunk update threads / always-defer toggles | No stalls or missing chunks |passed|
 
@@ -64,6 +64,42 @@ Pass = matches reference **B** visually, no new log errors, no crash. Fill Resul
 | 19 | Fly fast in a straight line for 2 minutes | No missing regions, no growth in log errors |passed|
 | 20 | Break and place many blocks near region borders | Updates show immediately, no flicker |passed|
 | 21 | 30-minute idle + wander session | No memory growth trend, no crash. (Region time is clamped, so the 24.8-day int overflow cannot crash.) |passed|
+
+## Findings
+
+**F1: "Direcium initialised" missing (row 1), resolved in code.** `fabric.mod.json` only registered the
+`client` entrypoint, so `Direcium.onInitialize` never ran. Not a rendering fault. A `main` entrypoint was added;
+the line will appear after rebuilding.
+
+**F2: terrain disappears at render distance > 5 after toggling see-through leaves (row 13). Status: FAILED TO REPRODUCE after rebuild; row 13 marked passed, bug kept on record.**
+Observed once, then not again after rebuilding with the Phase D follow-up changes (main entrypoint, scanner, docs).
+None of those changes touch rendering or buffers, so the cause is unknown and the failure may be intermittent
+(it depended on a native allocation succeeding). Reopen if it returns; the notes below still apply.
+Evidence from the log: DirectExp's native `ID3D11Device::CreateBuffer` fails ("unsupported bind-flag
+combination, or out of memory"), DirectExp falls back to a CPU-only buffer with no native handle, and then skips every
+draw that uses it. A buffer that fell back stays at handle 0 for its lifetime, which matches "stays broken until restart".
+
+What the evidence points toward (not confirmed):
+- Vertex buffers map only to the vertex bind flag in DirectExp, so a bad flag combination looks unlikely; out of memory (or the
+  D3D11 per-resource size cap) fits better.
+- Steady-state high render distance works without the toggle, so it is probably not plain capacity. A full chunk rebuild
+  has old and new region buffers alive together, and every DirectExp buffer also keeps a CPU mirror. D3D11 can also defer freeing a released
+  buffer until it is unbound and the context flushed, so VRAM may stay occupied across the rebuild.
+- Sodium creates these buffers through Blaze3D; Direcium does not create or size any buffer, so this is most likely on the DirectExp side.
+
+Discriminating tests (optional now; run them if the failure returns, row 13b to 13d):
+
+| # | Scenario | Why | Result |
+|---|----------|-----|--------|
+| 13b | Render distance 12, never toggle leaves, press F3+A (reload chunks) | If terrain disappears, the cause is the generic chunk-reload path and leaves are incidental |passed|
+| 13c | Render distance 12, watch dedicated GPU memory (Task Manager, Performance, GPU) before, during and after the toggle | Shows whether VRAM fills and stays full after the old buffers should be gone |test env using integrated gpu, unable to verify|
+| 13d | Same toggle at render distance 5, 6, 8; note the first distance that fails and your GPU's VRAM | A fixed threshold suggests a size/memory limit; a threshold that moves with VRAM suggests the churn peak |passed|
+
+When reporting to DirectExp, include the first `native GPU buffer creation unavailable` line, the 13b-13d results, the GPU model
+and VRAM. `tools/scan-log.py` now flags these two log lines as errors (it previously passed this run).
+
+**Not run:** row 16 (setting does not exist in this Sodium build). Row 14 (fog) has since been run and passed.
+The `-Ddirecium.stats=true` flag was not used, so no stats lines were recorded; add it for 13b-13d.
 
 ## Reading the stats line
 
