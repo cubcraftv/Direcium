@@ -4,6 +4,8 @@ Client-side Fabric mod that lets **Sodium**'s terrain renderer draw through **Di
 backend. DirectExp provides the backend; Direcium is the bridge between the two. It requires both,
 ships no Sodium code, and patches Sodium at run time with two Mixin injections.
 
+Also see [DirectExp](https://github.com/cubcraftv/DirectExp).
+
 ## Layout
 
 | Path | Purpose |
@@ -22,7 +24,7 @@ Run with `-Ddirecium.stats=true`, work through `docs/test/phase-d-correctness-ma
 
 ## Status
 
-Beta testing.
+Beta testing. No longer in active development.
 
 ## License
 

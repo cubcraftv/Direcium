@@ -3,15 +3,15 @@
 	"id": "direcium",
 	"version": "${version}",
 	"name": "Direcium",
-	"description": "Lets Sodium's terrain renderer draw through DirectExp's Direct3D 11 backend. Requires Sodium and DirectExp; ships no Sodium code.",
+	"description": "Lets Sodium's terrain renderer draw through DirectExp's Direct3D 11 backend. Requires Sodium and DirectExp.",
 	"authors": [
-		"Me!"
+		"Cubcraftv"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/cubcraftv/Direcium"
 	},
-	"license": "CC0-1.0",
+	"license": "Apache License 2.0",
 	"icon": "assets/direcium/icon.png",
 	"environment": "client",
 	"entrypoints": {

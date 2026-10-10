@@ -51,7 +51,7 @@ Not blockers but they decide quality (Phase 1 leftovers, see section 8): texel-b
 
 ## 4. What the add-on contains
 
-Suggested id `direcium`, package `dev.cubcraftv.direcium`, Java 25, Minecraft 26.2,
+Id `direcium`, package `dev.cubcraftv.direcium`, Java 25, Minecraft 26.2,
 same Loom / loader as DirectExp (`fabric-loom 1.18.2`, loader `0.19.5`). 26.x is unobfuscated, so no
 remapping or refmap is expected, but confirm with the first build.
 
