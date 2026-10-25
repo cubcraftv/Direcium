@@ -20,6 +20,9 @@
 		],
 		"client": [
 			"dev.cubcraftv.direcium.client.DireciumClient"
+		],
+		"sodium:config_api_user": [
+			"dev.cubcraftv.direcium.client.DireciumConfig"
 		]
 	},
 	"mixins": [
@@ -30,7 +33,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.19.5",
-		"minecraft": "~26.2",
+		"minecraft": ">=26.3",
 		"java": ">=25",
 		"fabric-api": "*",
 		"sodium": "${sodium_version_range}",

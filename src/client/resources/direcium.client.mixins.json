@@ -3,9 +3,7 @@
 	"package": "dev.cubcraftv.direcium.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"DrawContextMixin",
-		"MultiDrawBatchMixin",
-		"RenderPassBackendAccessor"
+		"DrawBackendMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

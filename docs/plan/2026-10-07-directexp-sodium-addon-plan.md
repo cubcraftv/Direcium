@@ -1,3 +1,5 @@
+> **SUPERSEDED (2026-10-25):** this plan targets MC 26.2 / Sodium 0.9.2. For 26.3 see `2026-10-25-sodium-26.3-port-plan.md`.
+
 # Direcium (DirectExp + Sodium bridge): Implementation Plan
 
 **Created:** 2026-10-07. **Status:** proposal; supersedes "Phase 3" of

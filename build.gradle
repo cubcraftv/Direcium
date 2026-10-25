@@ -31,6 +31,7 @@ dependencies {
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
 	// Sodium and DirectExp are not bundled: compile against them, and run with them in the dev client.
+	// DirectExp is only needed at compile time for its config classes (DireciumConfig).
 	// Put the jars in libs/ (see libs/README.md). If `clientRuntimeOnly` does not load them as mods under
 	// this Loom version, switch to `localRuntime` / `modLocalRuntime`.
 	clientCompileOnly files(project.sodium_jar)

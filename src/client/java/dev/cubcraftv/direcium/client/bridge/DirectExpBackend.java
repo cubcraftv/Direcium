@@ -1,7 +1,7 @@
 package dev.cubcraftv.direcium.client.bridge;
 
-import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.renderpearl.api.device.GpuDevice;
 import dev.cubcraftv.direcium.bridge.DirectExpBackendName;
 
 import java.lang.ref.WeakReference;
